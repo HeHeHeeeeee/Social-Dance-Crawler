@@ -25,7 +25,7 @@ def download_mp3(id: int, download_folder_path: str):
 
     api = f"https://www.dggwq.com/js/url.php?id={id}"
     #cookie = "Hm_lvt_e6186d8b90f5a34afb05cc151292844d=1690266344; PHPSESSID=cde672thcdj8o808vjo8gm2213; Hm_lvt_3b1546f0e4ee125a0dda33500e055418=1690267035; s_id=5391; s_name=13617915869; Hm_lpvt_3b1546f0e4ee125a0dda33500e055418=1690268396; Hm_lpvt_e6186d8b90f5a34afb05cc151292844d=1690270388"
-    mp3_url = requests.get(url=api, headers={"User-Agent": userAgent, "Cookie": cookie})
+    mp3_url = requests.get(url=api, headers={"User-Agent": userAgent})#, "Cookie": cookie})
     print(mp3_url)
     download_mp3 = requests.get(mp3_url).content
     download_path = download_folder_path + mp3_url.rsplit("/", 1)[-1]
