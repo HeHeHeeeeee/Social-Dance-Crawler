@@ -46,11 +46,14 @@ class Social_Dance_Download:
         song_name = song_name.split(".", maxsplit=1)[-1]
         # print(song_name)
 
-        # 获取锁，避免文件数量更新和写入文件不同步
+        # 获取锁，避免文件数量更新不一致
         self.sem.acquire()
         song_name = str(self.num) + "." + song_name
         # 拼接文件路径
         download_path = os.path.join(download_folder_path ,song_name)
+        self.num = self.num+1
+        self.sem.release()
+        
         # print(download_path)
         # 写入文件
         try:
@@ -58,9 +61,8 @@ class Social_Dance_Download:
                 f.write(download_mp3.content)
         except:
             print("文件写入错误")
-        self.num = self.num+1
+
         # print(download_path)
-        self.sem.release()
         
         print(f"下载完成: {song_name}")
 
