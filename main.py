@@ -2,7 +2,7 @@ from threading import BoundedSemaphore
 import requests
 import os
 from concurrent.futures import ThreadPoolExecutor
-
+from tqdm import tqdm
 
 def main():
     social_dance_download = Social_Dance_Download()
@@ -22,9 +22,10 @@ def main():
     with ThreadPoolExecutor() as executor:
         executor.map(social_dance_download.download_mp3, id_list, [download_folder_path for _ in range(len(id_list))])
     # for idd in id_list:
-    #     print(idd)
+    #     # print(idd)
     #     social_dance_download.download_mp3(id=idd, download_folder_path=download_folder_path)
-
+    print("下载完成")
+          
 class Social_Dance_Download:
 
     def __init__(self):
@@ -38,8 +39,7 @@ class Social_Dance_Download:
         # 获取歌曲链接
         mp3_url = requests.get(url=api, headers={"User-Agent": userAgent})
         mp3_url = mp3_url.content.decode("utf-8")
-        # 下载歌曲
-        download_mp3 = requests.get(mp3_url)
+        # print(mp3_url)
 
         # 分离出歌曲名
         song_name = mp3_url.rsplit("/", 1)[-1]
@@ -53,21 +53,24 @@ class Social_Dance_Download:
         download_path = os.path.join(download_folder_path ,song_name)
         self.num = self.num+1
         self.sem.release()
-        
-        # print(download_path)
-        # 写入文件
+
+        # 下载歌曲
+        download_mp3 = requests.get(mp3_url, headers={"User-Agent": userAgent}, stream=True)
+        total_size = int(download_mp3.headers.get("Content-Length", 0))  # 获取文件大小
+
         try:
             with open(download_path, "wb") as f:
-                f.write(download_mp3.content)
+                downloaded_size = 0
+                with tqdm(total=total_size, unit="B", unit_scale=True, desc=song_name) as pbar:
+                    for chunk in download_mp3.iter_content(chunk_size=512):
+                        if chunk:
+                            downloaded_size += len(chunk)
+                            f.write(chunk)
+                            pbar.update(len(chunk))
         except:
             print("文件写入错误")
 
-        # print(download_path)
-        
-        print(f"下载完成: {song_name}")
-
-
 if __name__ == "__main__":
     main()
-    # social_dance_download = Social_Dance_Download()
-    # social_dance_download.download_mp3(63275, "./下载的歌曲")
+    # # # social_dance_download = Social_Dance_Download()
+    # # # social_dance_download.download_mp3(63275, "./下载的歌曲")
