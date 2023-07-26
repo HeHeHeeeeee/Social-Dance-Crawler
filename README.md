@@ -3,7 +3,7 @@
 ## 使用方法
 #### 1.下载相关依赖
  pip install -r requirement.txt
-#### 2.打开官网https://www.dggwq.com，选取想要下载的音乐，并获取音乐的id
+#### 2.打开官网https://www.dggwq.com  ，选取想要下载的音乐，并获取音乐的id
 进入歌曲详细页面后，歌曲id在网址上
 ![Alt text](image.png)
 #### 3.在music_ids.txt中输入歌曲的id，每行输入一个
